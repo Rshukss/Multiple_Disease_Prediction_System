@@ -207,7 +207,7 @@ if selected == "Parkinson's Disease Prediction":
     parkinsons_diagnosis = ''
         
     if st.button("Parkinson's Disease Test Prediction"):
-        parkinsons_prediction = parkinsons_model.predict([[fo, Jitter_percent, fhi,  Jitter_Abs, RAP, PPQ,shimmer,shimmer_dB,APQ,NHR,DFA,spread1,PPE,spread2,HNR,RPDE]])                          
+        parkinsons_prediction = parkinsons_model.predict([[fo, Jitter_percent, fhi,Jitter_Abs,RAP,PPQ,shimmer,shimmer_dB,APQ,NHR,DFA,spread1,PPE,spread2,HNR,RPDE]])                          
         
         if (parkinsons_prediction[0] == 1):
           parkinsons_diagnosis = "Prediction Result: Parkinson's Positive"
