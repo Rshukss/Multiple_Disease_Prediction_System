@@ -20,7 +20,7 @@ Multiple Disease Prediction System is an enhanced machine learning-based web app
 
 1. **Clone the Repository**
 ```
-git clone https://github.com/Rshukss/Multiple_Disease_Prediction_System
+git clone https://github.com/Rshukss/Multiple_Disease_Prediction_System.git
 ```
 
 3. **Install Required Python Packages**
