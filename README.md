@@ -29,7 +29,7 @@ streamlit run webapp.py
 
 
 ## Project Structure
-
+```
 multiple-disease-prediction-system/
 │
 ├── webapp.py                          # Main Streamlit application
@@ -53,7 +53,7 @@ multiple-disease-prediction-system/
     ├── breastCancer.sav
     ├── heart_model.sav
     └── parkinsons.sav
-
+```
 
 
 ## Usage
