@@ -1,305 +1,231 @@
-# -*- coding: utf-8 -*-
-"""
-Spyder Editor/VSCode
-This is a temporary script file.
-"""
 import pickle
-from matplotlib.ft2font import BOLD
+from pathlib import Path
+from typing import List, Any, Dict, Tuple
 import streamlit as st
 from streamlit_option_menu import option_menu
 
+APP_TITLE = "Multiple Disease Prediction System"
+MODEL_DIR = Path("Saved Models")
+DISCLAIMER = (
+    "This application is for educational/demo purposes only and is NOT a "
+    "substitute for professional medical diagnosis or advice."
+)
 
-diabetes_model = pickle.load(open("Saved Models/diabetes_model.sav","rb"))
+# Feature spec:
+# type: "float" | "int" | "select"
+# For select provide "choices"
+DISEASES: Dict[str, Dict[str, Any]] = {
+    "Diabetes Prediction": {
+        "model_file": "diabetes_model.sav",
+        "features": [
+            {"label": "Pregnancies", "type": "int"},
+            {"label": "Glucose", "type": "int"},
+            {"label": "Insulin", "type": "int"},
+            {"label": "BMI", "type": "float"},
+            {"label": "Diabetes Pedigree Function", "type": "float"},
+            {"label": "Age", "type": "int"},
+        ],
+        "positive_label": "Diabetes Positive",
+        "negative_label": "Diabetes Negative",
+        "columns_per_row": 3,
+        "extra_help": """
+**Feature Notes**
+Pregnancies, Glucose (OGTT), Insulin (2hr), BMI (kg/m²), Pedigree (family history), Age (years).
+""",
+    },
+    "Heart Disease Prediction": {
+        "model_file": "heart_model.sav",
+        "features": [
+            {"label": "Age", "type": "int"},
+            {"label": "sex", "type": "select", "choices": [0, 1]}, 
+            {"label": "Chest Pain", "type": "select", "choices": [0,1,2,3]},
+            {"label": "Resting Blood Pressure", "type": "int"},
+            {"label": "Serum Cholesterol (mg/dl)", "type": "int"},
+            {"label": "Fasting Blood Sugar", "type": "select", "choices": [0,1]},
+            {"label": "Resting ECG", "type": "select", "choices": [0,1,2]},
+            {"label": "Max Heart Rate", "type": "int"},
+            {"label": "Exercise Induced Angina", "type": "select", "choices": [0,1]},
+            {"label": "ST Depression (oldpeak)", "type": "float"},
+            {"label": "Slope", "type": "select", "choices": [0,1,2]},
+            {"label": "Flourosopy Vessels", "type": "select", "choices": [0,1,2,3]},
+            {"label": "thal", "type": "select", "choices": [0, 1, 2, 3]},
+        ],
+        "positive_label": "Heart Disease Positive",
+        "negative_label": "Heart Disease Negative",
+        "columns_per_row": 4,
+        "extra_help": """
+Chest Pain: 0=Typical 1=Atypical 2=Non-anginal 3=Asymptomatic  
+FBS: 1 >120 mg/dl else 0  
+Rest ECG: 0=Normal 1=ST-T abn 2=LVH  
+Angina: 1=Yes 0=No (dataset dependent)  
+Slope: 0=Upsloping 1=Flat 2=Downsloping  
+Flourosopy Vessels: 0-3
+Sex: 0=Female 1=Male
+Thal: 0=Unknown, 1=Normal, 2=Fixed Defect, 3=Reversible Defect
+""",
+    },
+    "Parkinson's Disease Prediction": {
+        "model_file": "parkinsons.sav",
+        "features": [
+            {"label": "MDVP:Fo(Hz)", "type": "float"},
+            {"label": "MDVP:Fhi(Hz)", "type": "float"},
+            {"label": "MDVP:Flo(Hz)", "type": "float"},
+            {"label": "MDVP:Jitter(%)", "type": "float"},
+            {"label": "MDVP:Jitter(Abs)", "type": "float"},
+            {"label": "MDVP:RAP", "type": "float"},
+            {"label": "MDVP:PPQ", "type": "float"},
+            {"label": "MDVP:Shimmer", "type": "float"},
+            {"label": "MDVP:Shimmer(dB)", "type": "float"},
+            {"label": "MDVP:APQ", "type": "float"},
+            {"label": "NHR", "type": "float"},
+            {"label": "HNR", "type": "float"},
+            {"label": "DFA", "type": "float"},
+            {"label": "spread1", "type": "float"},
+            {"label": "spread2", "type": "float"},
+            {"label": "PPE", "type": "float"},
+        ],
+        "positive_label": "Parkinson's Positive",
+        "negative_label": "Parkinson's Negative",
+        "columns_per_row": 5,
+        "extra_help": """
+Acoustic perturbation and non-linear phonation metrics (jitter, shimmer, RAP, PPQ, APQ, NHR, HNR, PPE, RPDE, spread measures, DFA).
+""",
+    },
+    "Breast Cancer Prediction": {
+        "model_file": "breastCancer.sav",
+        "features": [
+            {"label": "radius_mean", "type": "float"},
+            {"label": "texture_mean", "type": "float"},
+            {"label": "perimeter_mean", "type": "float"},
+            {"label": "area_mean", "type": "float"},
+            {"label": "smoothness_mean", "type": "float"},
+            {"label": "compactness_mean", "type": "float"},
+            {"label": "concavity_mean", "type": "float"},
+            {"label": "concave points_mean", "type": "float"},
+            {"label": "symmetry_mean", "type": "float"},
+            {"label": "radius_se", "type": "float"},
+            {"label": "perimeter_se", "type": "float"},
+            {"label": "area_se", "type": "float"},
+            {"label": "concave points_se", "type": "float"},
+            {"label": "radius_worst", "type": "float"},
+            {"label": "texture_worst", "type": "float"},
+            {"label": "perimeter_worst", "type": "float"},
+            {"label": "area_worst", "type": "float"},
+            {"label": "smoothness_worst", "type": "float"},
+            {"label": "compactness_worst", "type": "float"},
+            {"label": "concavity_worst", "type": "float"},
+            {"label": "concave points_worst", "type": "float"},
+            {"label": "symmetry_worst", "type": "float"},
+            {"label": "fractal_dimension_worst", "type": "float"},
+        ],
+        "positive_label": "Breast Cancer Positive",
+        "negative_label": "Breast Cancer Negative",
+        "columns_per_row": 5,
+        "extra_help": """
+Shape, texture, and size descriptors (Mean / SE / Worst subsets). Higher irregularity often correlates with malignancy.
+""",
+    },
+}
 
-heart_model = pickle.load(open("Saved Models/heart_model.sav","rb"))
+@st.cache_resource(show_spinner=False)
+def load_model(file_name: str):
+    path = MODEL_DIR / file_name
+    with path.open("rb") as f:
+        return pickle.load(f)
 
-parkinsons_model = pickle.load(open("Saved Models/parkinsons.sav","rb"))
+def get_prediction(model, features: List[float]) -> Tuple[Any, Any]:
+    pred = model.predict([features])[0]
+    prob = None
+    if hasattr(model, "predict_proba"):
+        try:
+            prob = model.predict_proba([features])[0]
+        except Exception:
+            prob = None
+    return pred, prob
 
-breast_cancer_model = pickle.load(open("Saved Models/breastCancer.sav","rb"))
-
-with st.sidebar:
-    
-    selected = option_menu("Multiple Disease Prediction System",
-                           
-                            ["Diabetes Prediction",
-                             "Heart Disease Prediction",
-                             "Parkinson's Disease Prediction",
-                             "Breast Cancer Prediction"],
-                            
-                            icons = ["activity","heart","person-fill","clipboard2-pulse-fill"],
-                            
-                            default_index = 0)
-    
-
-if selected == "Diabetes Prediction":
-    
-    st.title("Diabetes Prediction using Machine Learning")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        Pregnancies = st.text_input("Number of Pregnancies")
-        
-    with col2:
-        Glucose = st.text_input('Glucose Level')
-    
-    with col3:
-        Insulin = st.text_input('Insulin Level')
-    
-    with col1:
-        BMI = st.text_input('BMI')
-    
-    with col2:
-        Diabetes_Pedigree_Function = st.text_input('Diabetes Pedigree Function')
-    
-    with col3:
-        Age = st.text_input('Age')
-   
-
-    diab_diagnosis=""
-    
-    if st.button("Diabetes Test Prediction"):
-        diabetes_prediction = diabetes_model.predict([[Pregnancies,Glucose,Insulin,BMI,Diabetes_Pedigree_Function,Age]])
-        
-        if diabetes_prediction[0]==1:
-            diab_diagnosis="Prediction Result: Diabetes Positive"
-            
+def render_feature_inputs(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    cols_per_row = cfg.get("columns_per_row", 3)
+    values: Dict[str, Any] = {}
+    features = cfg["features"]
+    for i, feat in enumerate(features):
+        if i % cols_per_row == 0:
+            cols = st.columns(cols_per_row)
+        col = cols[i % cols_per_row]
+        label = feat["label"]
+        ftype = feat["type"]
+        key = f"{cfg['model_file']}_{label}"
+        if ftype == "select":
+            values[label] = col.selectbox(label, feat["choices"], key=key)
         else:
-            diab_diagnosis="Prediction Result: Diabetes Negative"
-    
-    st.success(diab_diagnosis)
-  
+            values[label] = col.text_input(label, key=key, placeholder="Enter value")
+    return values
 
-
-
-              
-if selected == "Heart Disease Prediction":
-    
-    st.title("Heart Disease Prediction using Machine Learning")
-
-    with st.container():
-        col1,col2,col3 = st.columns(3)
-
-        with col1:
-            st.markdown("**A. Chest Pain Types:**  \n0-> typical angina  \n1-> atypical angina  \n2-> non-anginal pain  \n3-> asymptomatic  \n")
-        
-        with col2:
-            st.markdown("**B. Fasting Blood Sugar:**  \n1-> Greater than 120mg/dl  \n0-> Lesser than or equal to 120mg/dl")
-        
-        with col3:
-            st.markdown("**C. Resting ECG:** \n0-> Normal  \n1-> Having ST-T wave abnormality  \n2-> showing probable or definite left ventricular hypertrophy by Estes' criteria\n")
-
-        with col1:
-            st.markdown("**D. Excercise Induced Angina:**  \n0-> yes  \n1-> no\n")
-        
-        with col2:
-            st.markdown("**E. Slope:**  \n0-> Upsloping  \n1-> Flat \n 2->Downsloping\n")
-        
-        
-    st.markdown("***")
-    with st.container():
-    
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            age = st.text_input('Age')
-            
-        with col2:
-            cp = st.selectbox('Chest Pain',[0,1,2,3])
-            
-        with col3:
-            trestbps = st.text_input('Resting Blood Pressure')
-            
-        with col4:
-            chol = st.text_input('Serum Cholestoral in mg/dl')
-            
-        with col1:
-            fbs = st.selectbox('Fasting Blood Sugar',[0,1],index=0)
-            
-        with col2:
-            restecg = st.selectbox('Resting ECG',[0,1,2],index=0)
-            
-        with col3:
-            thalach = st.text_input('Maximum Heart Rate')
-        
-        with col4:
-            exang = st.text_input('Excercise Induced Angina')
-
-        with col1:
-            oldpeak = st.text_input('ST depression Induced')
-            
-        with col2:
-            slope = st.selectbox('Slope ',[0,1,2])
-            
-        with col3:
-            ca = st.selectbox('Blood Vessels coloured by flourosopy',[0,1,2,3])
-            
-        
-        heart_diagnosis = ""
-
-        if st.button('Heart Disease Test Prediction'):
-            heart_prediction = heart_model.predict([[age, cp, trestbps, chol, fbs, restecg,thalach,exang,oldpeak,slope,ca]])                          
-            
-            if (heart_prediction[0] == 1):
-                heart_diagnosis = "Prediction Result: Heart Disease Positive"
+def parse_and_validate(cfg: Dict[str, Any], raw: Dict[str, Any]) -> Tuple[List[float], List[str]]:
+    parsed: List[float] = []
+    errors: List[str] = []
+    for feat in cfg["features"]:
+        label = feat["label"]
+        ftype = feat["type"]
+        val = raw[label]
+        if ftype == "select":
+            # already numeric (choices are ints)
+            parsed.append(float(val))
+            continue
+        # text_input path
+        if val.strip() == "":
+            errors.append(f"{label}: missing")
+            continue
+        try:
+            if ftype == "int":
+                parsed.append(int(val))
             else:
-                heart_diagnosis = "Prediction Result: Heart Disease Negative"
-            
-        st.success(heart_diagnosis)
+                parsed.append(float(val))
+        except ValueError:
+            errors.append(f"{label}: invalid number '{val}'")
+    return parsed, errors
 
+def render_extra_help(text: str):
+    if text:
+        with st.expander("Feature Help / Definitions"):
+            st.markdown(text)
 
+def disease_page(name: str):
+    cfg = DISEASES[name]
+    st.header(name)
+    render_extra_help(cfg.get("extra_help", ""))
+    with st.form(f"{name}_form"):
+        raw_values = render_feature_inputs(cfg)
+        submitted = st.form_submit_button("Predict")
+    if submitted:
+        features, errs = parse_and_validate(cfg, raw_values)
+        if errs:
+            st.error("Validation errors:\n" + "\n".join(f"- {e}" for e in errs))
+            return
+        try:
+            model = load_model(cfg["model_file"])
+            pred, prob = get_prediction(model, features)
+            label = cfg["positive_label"] if int(pred) == 1 else cfg["negative_label"]
+            if prob is not None and len(prob) == 2:
+                st.success(f"Prediction: {label} (probability={prob[1]:.2%})")
+            else:
+                st.success(f"Prediction: {label}")
+        except FileNotFoundError as e:
+            st.error(str(e))
+        except Exception as e:
+            st.error(f"Error during prediction: {e}")
 
+def main():
+    st.set_page_config(page_title=APP_TITLE, layout="wide")
+    with st.sidebar:
+        selected = option_menu(
+            APP_TITLE,
+            list(DISEASES.keys()),
+            icons=["activity", "heart", "person-fill", "clipboard2-pulse-fill"],
+            default_index=0,
+        )
+        st.markdown("---")
+        st.caption(DISCLAIMER)
+    disease_page(selected)
 
-if selected == "Parkinson's Disease Prediction":
-    
-    st.title("Parkinson's Disease Prediction using Machine Learning")
-    
-    col1, col2, col3, col4, col5 = st.columns(5)  
-    
-    with col1:
-        fo = st.text_input('MDVP:Fo(Hz)')
-        
-    with col2:
-        Jitter_percent = st.text_input('MDVP:Jitter(%)')
-        
-    with col3:
-        fhi = st.text_input('MDVP:Fhi(Hz)')
-        
-    with col4:
-        Jitter_Abs = st.text_input('MDVP:Jitter(Abs)')
-        
-    with col5:
-        RAP = st.text_input('MDVP:RAP')
-        
-    with col1:
-        PPQ = st.text_input('MDVP:PPQ')
-
-    with col2:
-        shimmer = st.text_input('MDVP:Shimmer')
-
-    with col3:
-        shimmer_dB = st.text_input('MDVP:Shimmer(dB)')
-
-    with col4:
-        APQ = st.text_input('MDVP:APQ')    
-    
-    with col5:
-        NHR = st.text_input("NHR")
-
-    with col1:
-        DFA = st.text_input("DFA")
-
-    with col2:
-        spread1 = st.text_input("spread1")
-
-    with col3:
-        PPE = st.text_input("PPE")
-
-    with col4:
-        spread2 = st.text_input("spread2")
-
-    with col5:
-        HNR = st.text_input("HNR")
-    
-    with col1:
-        RPDE = st.text_input("RPDE")
-        
-    parkinsons_diagnosis = ''
-        
-    if st.button("Parkinson's Disease Test Prediction"):
-        parkinsons_prediction = parkinsons_model.predict([[fo, Jitter_percent, fhi,Jitter_Abs,RAP,PPQ,shimmer,shimmer_dB,APQ,NHR,DFA,spread1,PPE,spread2,HNR,RPDE]])                          
-        
-        if (parkinsons_prediction[0] == 1):
-          parkinsons_diagnosis = "Prediction Result: Parkinson's Positive"
-        else:
-          parkinsons_diagnosis = "Prediction Result: Parkinson's Negative"
-        
-    st.success(parkinsons_diagnosis)
-        
-        
-if selected == "Breast Cancer Prediction":
-    
-    st.title("Breast Cancer Prediction using Machine Learning")
-    
-    col1, col2, col3, col4, col5 = st.columns(5)
-    
-    with col1:
-        radius_mean = st.text_input('Radius Mean')
-        
-    with col2:
-        texture_mean = st.text_input('Texture Mean')
-        
-    with col3:
-        perimeter_mean = st.text_input('Perimeter Mean')
-        
-    with col4:
-        area_mean = st.text_input('Area Mean')
-        
-    with col5:
-        smoothness_mean = st.text_input('Smoothness Mean')
-
-    with col1:
-        compactness_mean = st.text_input("Compactness Mean")
-    
-    with col2:
-        concavity_mean = st.text_input('Concavity Mean')
-        
-    with col3:
-        concave_points_mean = st.text_input('Concave Pts Mean')
-        
-    with col4:
-        symmetry_mean = st.text_input('Symmetry Mean')
-        
-    with col5:
-        radius_se = st.text_input('Radius SE')
-    
-    with col1:
-        perimeter_se = st.text_input('Perimeter SE')
-
-    with col2:
-        area_se = st.text_input('Area SE')
-
-    with col3:
-        concave_points_se = st.text_input('Concave Pts SE')
-    
-    with col4:
-        radius_worst = st.text_input("Radius Worst")
-    
-    with col5:
-        texture_worst = st.text_input('Texture Worst')
-        
-    with col1:
-        perimeter_worst = st.text_input('Perimeter Worst')
-        
-    with col2:
-        area_worst = st.text_input('Area Worst')
-        
-    with col3:
-        smoothness_worst = st.text_input('Smoothness Worst')
-
-    with col4:
-        compactness_worst = st.text_input("Compactness Worst")
-    
-    with col5:
-        concavity_worst = st.text_input('Concavity Worst')
-        
-    with col1:
-        concave_points_worst = st.text_input('Concave Pts Worst')
-        
-    with col2:
-        symmetry_worst = st.text_input('Symmetry Worst')
-        
-    with col3:
-        fractal_dimension_worst = st.text_input('Fractional Dimension Worst')
-
-    breast_cancer_diagnosis = ''
-        
-    if st.button("Breast Cancer Test Prediction"):
-        breast_cancer_prediction = breast_cancer_model.predict([[radius_mean,texture_mean,perimeter_mean,area_mean,smoothness_mean,compactness_mean,concavity_mean,concave_points_mean,symmetry_mean,radius_se,perimeter_se,area_se,concave_points_se,radius_worst,texture_worst,perimeter_worst,area_worst,smoothness_worst,compactness_worst,concavity_worst,concave_points_worst,symmetry_worst,fractal_dimension_worst]])                          
-        
-        if (breast_cancer_prediction[0] == 1):
-          breast_cancer_diagnosis = "Prediction Result: Breast Cancer Positive"
-        else:
-          breast_cancer_diagnosis = "Prediction Result: Breast Cancer Negative"
-        
-    st.success(breast_cancer_diagnosis)
+if __name__ == "__main__":
+    main()

@@ -1,1 +1,0 @@
-streamlit run "C:\Users\Rahul\Desktop\ML_Projects\Multi_Disease_Prediction\webapp.py"

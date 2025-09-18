@@ -1,0 +1,39 @@
+{
+  "model_file": "heart_model.sav",
+  "final_model_type": "SVM",
+  "preprocessing": "StandardScaler + PCA",
+  "selected_features": [
+    "PC1",
+    "PC2",
+    "PC3",
+    "PC4",
+    "PC5",
+    "PC6",
+    "PC7",
+    "PC8",
+    "PC9",
+    "PC10"
+  ],
+  "n_pca_components": 10,
+  "variance_explained": 0.9031860489687474,
+  "all_features_original_order": [
+    "age",
+    "sex",
+    "cp",
+    "trestbps",
+    "chol",
+    "fbs",
+    "restecg",
+    "thalach",
+    "exang",
+    "oldpeak",
+    "slope",
+    "ca",
+    "thal"
+  ],
+  "target_mapping": {
+    "0": "No Heart Disease",
+    "1": "Heart Disease"
+  },
+  "positive_class": 1
+}

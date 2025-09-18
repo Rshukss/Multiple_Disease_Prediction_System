@@ -1,0 +1,28 @@
+{
+  "model_file": "diabetes.sav",
+  "final_model_type": "RandomForest",
+  "selected_features": [
+    "Pregnancies",
+    "Glucose",
+    "Insulin",
+    "BMI",
+    "DiabetesPedigreeFunction",
+    "Age"
+  ],
+  "all_features_original_order": [
+    "Pregnancies",
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "BMI",
+    "DiabetesPedigreeFunction",
+    "Age"
+  ],
+  "best_params": null,
+  "target_mapping": {
+    "0": "Non-Diabetic",
+    "1": "Diabetic"
+  },
+  "positive_class": 1
+}
