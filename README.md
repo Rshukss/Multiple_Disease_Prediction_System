@@ -19,14 +19,19 @@ Multiple Disease Prediction System is an enhanced machine learning-based web app
 ## Installation
 
 1. **Clone the Repository**
-pip install -r requirements.txt
+```
+git clone https://github.com/Rshukss/Multiple_Disease_Prediction_System
+```
 
-2. **Install Required Python Packages**
+3. **Install Required Python Packages**
+```
 pip install -r requirements.txt
+```
 
-3. **Run the Application**
+4. **Run the Application**
+```
 streamlit run webapp.py
-
+```
 
 ## Project Structure
 ```
