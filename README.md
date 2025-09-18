@@ -122,3 +122,7 @@ This repository contains **enhanced versions** of the models described in our pu
 - [Pandas](https://pandas.pydata.org/) and [NumPy](https://numpy.org/) for data manipulation.
 - Original datasets from UCI Machine Learning Repository and Kaggle.
 
+## License
+
+This project is for academic and research purposes only.
+
